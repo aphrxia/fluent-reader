@@ -197,13 +197,20 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
 
     handleInputChange = event => {
         const name: string = event.target.name
-        this.setState({ [name]: event.target.value })
+        const value: string = event.target.value
+        this.setState({
+            newUrl: value,
+            [name]: value,
+        })
     }
 
     addSource = (event: React.FormEvent) => {
         event.preventDefault()
         let trimmed = this.state.newUrl.trim()
-        if (urlTest(trimmed)) this.props.addSource(trimmed)
+        if (urlTest(trimmed)) {
+            this.props.addSource(trimmed)
+            this.setState({ newUrl: "" })
+        }
     }
 
     onOpenTargetChange = (_, option: IChoiceGroupOption) => {
@@ -246,9 +253,10 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                     <Stack.Item grow>
                         <TextField
                             onGetErrorMessage={v =>
-                                urlTest(v.trim())
+                                this.state.newUrl &&
+                                (urlTest(v.trim())
                                     ? ""
-                                    : intl.get("sources.badUrl")
+                                    : intl.get("sources.badUrl"))
                             }
                             validateOnLoad={false}
                             placeholder={intl.get("sources.inputUrl")}
